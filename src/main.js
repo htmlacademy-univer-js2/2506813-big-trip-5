@@ -1,17 +1,7 @@
-import FilterView from './view/filter-view.js';
-import TripInfoView from './view/trip-info-view.js';
-import {render, RenderPosition} from './render.js';
-import Presenter from './presenter/route-presenter.js';
+import Presenter from './presenter/main-presenter';
+import MainModel from './model/main-model';
 
-const tripMainContainer = document.querySelector('.trip-main');
-const filterContainer = document.querySelector('.trip-controls__filters');
-const tripEventsContainer = document.querySelector('.trip-events');
+const mainModel = new MainModel();
+const presenter = new Presenter({mainModel});
 
-const routePresenter = new Presenter({
-  container: tripEventsContainer
-});
-
-render(new TripInfoView(), tripMainContainer, RenderPosition.AFTERBEGIN);
-render(new FilterView(), filterContainer);
-
-routePresenter.init();
+presenter.init();
