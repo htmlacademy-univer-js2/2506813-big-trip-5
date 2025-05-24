@@ -1,0 +1,26 @@
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+
+const correctDateFormat = (date) => dayjs.utc(date).format('DD/MM/YY_HH:mm');
+
+const extractDate = (date) => dayjs.utc(date).format('MMM DD');
+
+const extractTime = (date) => dayjs.utc(date).format('HH:mm');
+
+const calculateFlightTime = (startTime, endTime, unit = 'm') =>{
+  const difference = dayjs(endTime).diff(dayjs(startTime), unit);
+  const hours = Math.floor(difference / 60);
+  const days = Math.floor(hours / 24);
+
+  if (difference < 60){
+    return `${difference}M`;
+  }else if (hours < 24){
+    return `${hours}H ${difference - hours * 60}M`;
+  }else{
+    return `${days}D ${hours}H ${difference - hours * 60}M`;
+  }
+};
+
+export { correctDateFormat, extractDate, extractTime, calculateFlightTime };

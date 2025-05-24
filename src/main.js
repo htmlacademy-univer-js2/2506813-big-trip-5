@@ -1,7 +1,18 @@
-import Presenter from './presenter/main-presenter';
-import MainModel from './model/main-model';
+import FiltersView from './view/filters-view.js';
+import { render } from './framework/render.js';
+import BoardPresenter from './presenter/board-presenter.js';
+import PointModel from './model/point-model.js';
 
-const mainModel = new MainModel();
-const presenter = new Presenter({mainModel});
+const siteMainElement = document.querySelector('.trip-events');
+const siteFilterElement = document.querySelector('.trip-controls__filters');
+const pointModel = new PointModel();
+const boardPresenter = new BoardPresenter(
+  {
+    boardContainer: siteMainElement,
+    pointModel,
+  }
+);
 
-presenter.init();
+render(new FiltersView(), siteFilterElement);
+
+boardPresenter.init();
