@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Степан Якубчик](https://up.htmlacademy.ru/univer-js2/5/user/2506813).
-* Наставник: [Владимир Вавщик](https://htmlacademy.ru/profile/id1610171).
+* Студент: [Дарья Королева](https://up.htmlacademy.ru/univer-js2/5/user/2508023).
+* Наставник: `Владимир Шишлянников`.
 
 ---
 
@@ -48,5 +48,5 @@ git clone SSH-адрес_вашего_форка
 
 Репозиторий создан для обучения на профессиональном курсе «[JavaScript. Архитектура клиентских приложений](https://htmlacademy.ru/intensive/ecmascript)» от [HTML Academy](https://htmlacademy.ru).
 
-[check-image]: https://github.com/htmlacademy-ecmascript/2506813-big-trip-5/workflows/Project%20check/badge.svg?branch=master
-[check-url]: https://github.com/htmlacademy-ecmascript/2506813-big-trip-5/actions
+[check-image]: https://github.com/htmlacademy-ecmascript/2508023-big-trip-5/workflows/Project%20check/badge.svg?branch=master
+[check-url]: https://github.com/htmlacademy-ecmascript/2508023-big-trip-5/actions
