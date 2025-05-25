@@ -1,44 +1,22 @@
-const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+const EVENT_TYPES = [
+  { type: 'taxi', label: 'Taxi' },
+  { type: 'bus', label: 'Bus' },
+  { type: 'train', label: 'Train' },
+  { type: 'ship', label: 'Ship' },
+  { type: 'drive', label: 'Drive' },
+  { type: 'flight', label: 'Flight' },
+  { type: 'check-in', label: 'Check-in' },
+  { type: 'sightseeing', label: 'Sightseeing' },
+  { type: 'restaurant', label: 'Restaurant' }
+];
 
-const DESCRIPTIONS = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra.',
-  'Aliquam id orci ut lectus varius viverra.',
-  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-  'Sed sed nisi sed augue convallis suscipit in sed felis.', 'Aliquam erat volutpat.',
-  'Nunc fermentum tortor ac porta dapibus.', 'In rutrum ac purus sit amet tempus.'];
-
-const DESTINATIONS = ['Paris', 'Madrid', 'New-York', 'Moskow', 'London', 'Berlin', 'Rome', 'Tokyo', 'Rio', 'Egypt'];
-
-const OFFERS = ['Upgrade to a business class', 'Rent a car', 'Add luggage', 'Book tickets', 'Choose seats', 'Add meal'];
-
-const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present',
-  PAST: 'past',
-};
-
-const SortType = {
-  DAY: 'day',
-  EVENT: 'event',
-  TIME: 'time',
-  PRICE: 'price',
-  OFFERS: 'offer',
-};
-
-const UserAction = {
-  UPDATE_POINT: 'UPDATE_POINT',
+const USER_ACTION = {
   ADD_POINT: 'ADD_POINT',
+  UPDATE_POINT: 'UPDATE_POINT',
   DELETE_POINT: 'DELETE_POINT',
 };
 
-const UpdateType = {
-  PATCH: 'PATCH',
-  MINOR: 'MINOR',
-  MAJOR: 'MAJOR',
-};
+const API_BASE_URL = 'https://24.objects.htmlacademy.pro/big-trip';
+const API_AUTHORIZATION = 'Basic 9a8ds7f9ashg9hj4a';
 
-export { POINT_TYPES, DESCRIPTIONS, DESTINATIONS, OFFERS, FilterType, SortType, UpdateType, UserAction };
+export { EVENT_TYPES, USER_ACTION, API_BASE_URL, API_AUTHORIZATION };

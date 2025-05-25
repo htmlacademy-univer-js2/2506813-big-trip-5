@@ -1,45 +1,38 @@
+import FilterModel, {UPDATE_TYPE} from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import BoardPresenter from './presenter/board-presenter.js';
-import PointModel from './model/point-model.js';
-import FilterModel from './model/filter-model.js';
-import NewPointButtonView from './view/new-point-button-view.js';
-import { render } from './framework/render.js';
+import TripPresenter from './presenter/trip-presenter.js';
+import TripModel from './model/trip-model.js';
+import TripApiService from './api/trip-api-service.js';
+import { API_BASE_URL, API_AUTHORIZATION } from './const.js';
 
-const siteMainElement = document.querySelector('.trip-events');
-const siteFilterElement = document.querySelector('.trip-controls__filters');
-const siteHeaderElement = document.querySelector('.trip-main');
-const pointModel = new PointModel();
+const eventsContainer = document.querySelector('.trip-events');
+const eventsListContainer = document.querySelector('.trip-events__list');
+const createEventButton = document.querySelector('.trip-main__event-add-btn');
+
+const apiService = new TripApiService(API_BASE_URL, API_AUTHORIZATION);
+const tripModel = new TripModel(apiService);
 const filterModel = new FilterModel();
-const boardPresenter = new BoardPresenter(
-  {
-    boardContainer: siteMainElement,
-    pointModel,
-    filterModel,
-    onNewPointDestroy: handleNewPointFormClose
-  }
-);
 
-const filterPresenter = new FilterPresenter({
-  filterContainer: siteFilterElement,
-  filterModel,
-  pointModel
-});
+createEventButton.disabled = true;
 
-const newPointButtonComponent = new NewPointButtonView({
-  onClick: handleNewPointButtonClick
-});
-
-function handleNewPointFormClose() {
-  newPointButtonComponent.element.disabled = false;
-}
-
-function handleNewPointButtonClick() {
-  boardPresenter.createPoint();
-  newPointButtonComponent.element.disabled = true;
-}
-
-render(newPointButtonComponent, siteHeaderElement);
-
-boardPresenter.init();
+const filterContainer = document.querySelector('.trip-controls__filters');
+const filterPresenter = new FilterPresenter(filterContainer, filterModel);
 filterPresenter.init();
-document.querySelector('.trip-main__event-add-btn').remove();
+
+const tripPresenter = new TripPresenter(tripModel, filterModel, eventsContainer, eventsListContainer);
+
+createEventButton.addEventListener('click', (e) => {
+  e.preventDefault();
+  tripPresenter.handleNewPointFormOpen();
+});
+
+tripModel.addObserver((updateType) => {
+  if (updateType === UPDATE_TYPE.INIT) {
+    createEventButton.disabled = false;
+  } else if (updateType === UPDATE_TYPE.ERROR) {
+    createEventButton.disabled = true;
+  }
+});
+
+tripPresenter.init();
+tripModel.init();

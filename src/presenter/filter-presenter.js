@@ -1,61 +1,61 @@
-import { render, replace, remove } from '../framework/render.js';
-import FilterView from '../view/filters-view.js';
-import { filter } from '../utils/filter.js';
-import { FilterType, UpdateType } from '../const.js';
+import FiltersView from '../view/filters.js';
+import {FilterType, UPDATE_TYPE} from '../model/filter-model.js';
+import {render} from '../render';
+import {remove} from '../framework/render';
 
 export default class FilterPresenter {
-  #filterContainer = null;
-  #filterModel = null;
-  #pointsModel = null;
+  #filterModel;
+  #filtersComponent;
+  #container;
 
-  #filterComponent = null;
+  #handleFilterTypeChange = (filterType) => {
+    this.#filterModel.setFilter(UPDATE_TYPE.FILTER, filterType);
+  };
 
-  constructor({filterContainer, filterModel, pointModel}) {
-    this.#filterContainer = filterContainer;
+  #handleModelEvent = (updateType) => {
+    if (updateType === UPDATE_TYPE.FILTER) {
+      this.init();
+    }
+  };
+
+  constructor(filterContainer, filterModel) {
+    this.#container = filterContainer;
     this.#filterModel = filterModel;
-    this.#pointsModel = pointModel;
-
-    this.#pointsModel.addObserver(this.#handleModelEvent);
-    this.#filterModel.addObserver(this.#handleModelEvent);
-  }
-
-  get filters() {
-    const points = this.#pointsModel.points;
-
-    return Object.values(FilterType).map((type) => ({
-      type,
-      count: filter[type](points).length
-    }));
+    this.#filtersComponent = null;
   }
 
   init() {
-    const filters = this.filters;
-    const prevFilterComponent = this.#filterComponent;
+    const filtersData = [
+      {
+        name: FilterType.EVERYTHING,
+        label: 'Everything',
+        isChecked: this.#filterModel.getFilter() === FilterType.EVERYTHING
+      },
+      {
+        name: FilterType.FUTURE,
+        label: 'Future',
+        isChecked: this.#filterModel.getFilter() === FilterType.FUTURE
+      },
+      {
+        name: FilterType.PRESENT,
+        label: 'Present',
+        isChecked: this.#filterModel.getFilter() === FilterType.PRESENT
+      },
+      {
+        name: FilterType.PAST,
+        label: 'Past',
+        isChecked: this.#filterModel.getFilter() === FilterType.PAST
+      }
+    ];
 
-    this.#filterComponent = new FilterView({
-      filters,
-      currentFilterType: this.#filterModel.filter,
-      onFilterTypeChange: this.#handleFilterTypeChange
-    });
-
-    if (prevFilterComponent === null) {
-      render(this.#filterComponent, this.#filterContainer);
-      return;
+    if (this.#filtersComponent) {
+      remove(this.#filtersComponent);
     }
 
-    replace(this.#filterComponent, prevFilterComponent);
-    remove(prevFilterComponent);
+    this.#filtersComponent = new FiltersView(filtersData);
+    this.#filtersComponent.setFilterChangeHandler(this.#handleFilterTypeChange);
+    render(this.#filtersComponent, this.#container);
+
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
-
-  #handleModelEvent = () => {
-    this.init();
-  };
-
-  #handleFilterTypeChange = (filterType) => {
-    if (this.#filterModel.filter === filterType) {
-      return;
-    }
-
-    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
-  };
 }
