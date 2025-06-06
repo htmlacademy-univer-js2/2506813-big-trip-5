@@ -1,22 +1,66 @@
-const EVENT_TYPES = [
-  { type: 'taxi', label: 'Taxi' },
-  { type: 'bus', label: 'Bus' },
-  { type: 'train', label: 'Train' },
-  { type: 'ship', label: 'Ship' },
-  { type: 'drive', label: 'Drive' },
-  { type: 'flight', label: 'Flight' },
-  { type: 'check-in', label: 'Check-in' },
-  { type: 'sightseeing', label: 'Sightseeing' },
-  { type: 'restaurant', label: 'Restaurant' }
-];
+import { pointPast, pointFuture, pointPresent } from './point-filters';
 
-const USER_ACTION = {
-  ADD_POINT: 'ADD_POINT',
+export const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export const FORM_INPUT_TIME_FORMAT = 'DD/MM/YY HH:mm';
+export const POINT_TYPE = ['taxi', 'bus', 'ship', 'train', 'flight', 'drive', 'check-in', 'sightseeing', 'restaurant'];
+export const DATE_FORMAT = {
+  'full-date': 'YYYY-MM-DD',
+  'month-day': 'MMM DD',
+  'hours-minutes': 'HH:mm',
+  'full-date-and-time': 'YYYY-MM-DDTHH:mm',
+  'full-date-and-time-slash': 'DD/MM/YYYY HH:mm',
+  'flatpickr': 'd/m/y H:i',
+  'duration': 'HH[H] mm[M]'
+};
+
+export const FILTER_TYPES = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export const FILTER_GENERATOR = {
+  [FILTER_TYPES.EVERYTHING]: (points) => [...points],
+  [FILTER_TYPES.PAST]: (points) => points.filter((point) => pointPast(point)),
+  [FILTER_TYPES.PRESENT]: (points) => points.filter((point) => pointPresent(point)),
+  [FILTER_TYPES.FUTURE]: (points) => points.filter((point) => pointFuture(point)),
+};
+
+export const SortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFER: 'offer'
+};
+
+export const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
   DELETE_POINT: 'DELETE_POINT',
 };
 
-const API_BASE_URL = 'https://24.objects.htmlacademy.pro/big-trip';
-const API_AUTHORIZATION = 'Basic 9a8ds7f9ashg9hj4a';
+export const ApiMethod = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
 
-export { EVENT_TYPES, USER_ACTION, API_BASE_URL, API_AUTHORIZATION };
+export const ContentType = {
+  JSON: 'application/json',
+};
+
+export const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+  INIT: 'INIT',
+};

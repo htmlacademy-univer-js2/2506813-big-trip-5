@@ -1,31 +1,23 @@
-import Observable from '../framework/observable.js';
+export default class FilterModel {
+  #currentFilter = 'everything';
+  #observers = [];
 
-export const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present',
-  PAST: 'past',
-};
-
-export const UPDATE_TYPE = {
-  FILTER: 'filter',
-  LOADING: 'loading',
-  ERROR: 'error',
-  INIT: 'init',
-};
-
-export default class FilterModel extends Observable {
-  #filter = FilterType.EVERYTHING;
-
-  getFilter() {
-    return this.#filter;
+  get filter() {
+    return this.#currentFilter;
   }
 
-  setFilter(updateType, filter) {
-    if (this.#filter === filter) {
-      return;
+  setFilter(newFilter) {
+    if (this.#currentFilter !== newFilter) {
+      this.#currentFilter = newFilter;
+      this.#notifyObservers();
     }
-    this.#filter = filter;
-    this._notify(updateType, this.#filter);
+  }
+
+  addObserver(observer) {
+    this.#observers.push(observer);
+  }
+
+  #notifyObservers() {
+    this.#observers.forEach((observer) => observer());
   }
 }

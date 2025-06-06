@@ -1,38 +1,43 @@
-import FilterModel, {UPDATE_TYPE} from './model/filter-model.js';
-import FilterPresenter from './presenter/filter-presenter.js';
-import TripPresenter from './presenter/trip-presenter.js';
-import TripModel from './model/trip-model.js';
-import TripApiService from './api/trip-api-service.js';
-import { API_BASE_URL, API_AUTHORIZATION } from './const.js';
+import Presenter from './presenter/mainPresenter.js';
+import DestinationModel from './model/destination-model.js';
+import PointsModel from './model/point-model.js';
+import OffersModel from './model/offer-model.js';
+import FilterModel from './model/filter-model.js';
+import ApiService from './api-services/api-service.js';
 
-const eventsContainer = document.querySelector('.trip-events');
-const eventsListContainer = document.querySelector('.trip-events__list');
-const createEventButton = document.querySelector('.trip-main__event-add-btn');
+const AUTHORIZATION = 'Basic ahsfsdfsdfs43242';
+const END_POINT = 'https://21.objects.htmlacademy.pro/big-trip';
 
-const apiService = new TripApiService(API_BASE_URL, API_AUTHORIZATION);
-const tripModel = new TripModel(apiService);
+const filterContainer = document.body.querySelector('.trip-controls__filters');
+const eventsContainer = document.body.querySelector('.trip-events');
+const tripMainContainer = document.body.querySelector('.trip-main');
+
+const apiService = new ApiService(END_POINT, AUTHORIZATION);
 const filterModel = new FilterModel();
+const pointsModel = new PointsModel(filterModel, apiService);
+const destinationModel = new DestinationModel(apiService);
+const offersModel = new OffersModel(apiService);
 
-createEventButton.disabled = true;
 
-const filterContainer = document.querySelector('.trip-controls__filters');
-const filterPresenter = new FilterPresenter(filterContainer, filterModel);
-filterPresenter.init();
-
-const tripPresenter = new TripPresenter(tripModel, filterModel, eventsContainer, eventsListContainer);
-
-createEventButton.addEventListener('click', (e) => {
-  e.preventDefault();
-  tripPresenter.handleNewPointFormOpen();
+const presenter = new Presenter({
+  eventsContainer,
+  filterContainer,
+  tripMainContainer,
+  pointsModel,
+  destinationModel,
+  offersModel,
+  filterModel,
+  apiService,
 });
 
-tripModel.addObserver((updateType) => {
-  if (updateType === UPDATE_TYPE.INIT) {
-    createEventButton.disabled = false;
-  } else if (updateType === UPDATE_TYPE.ERROR) {
-    createEventButton.disabled = true;
-  }
-});
-
-tripPresenter.init();
-tripModel.init();
+Promise.all([
+  destinationModel.init(),
+  offersModel.init(),
+  pointsModel.init(),
+])
+  .then(() => {
+    presenter.init();
+  })
+  .catch(() => {
+    presenter.init();
+  });
