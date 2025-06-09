@@ -1,47 +1,86 @@
-import FilterView from '../view/filters.js';
-import { remove, render } from '../framework/render.js';
-import { UpdateType } from '../const.js';
+import { render, replace, remove } from '../framework/render.js';
+import FiltersView from '../view/filters-view.js';
+import { filter } from '../utils/filter.js';
+import { FilterType, UpdateType } from '../const.js';
 
 export default class FilterPresenter {
-  #eventsModel = null;
-  #filterModel = null;
   #filterContainer = null;
+
+  #filterModel = null;
+  #pointsModel = null;
+  #offersModel = null;
+  #destinationsModel = null;
+
   #filterComponent = null;
 
-  constructor(filterContainer, eventsModel, filterModel) {
+  constructor({filterContainer, pointsModel, destinationsModel, offersModel, filterModel}) {
     this.#filterContainer = filterContainer;
-    this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
+    this.#pointsModel = pointsModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
 
-    this.#eventsModel.addObserver(this.#handleEventsChange);
-    this.#filterModel.addObserver(this.#handleEventsChange);
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  get events() {
-    return this.#eventsModel.events;
+  get filters() {
+    const points = this.#pointsModel.points;
+
+    return [
+      {
+        type: FilterType.EVERYTHING,
+        name: FilterType.EVERYTHING,
+        count: filter[FilterType.EVERYTHING](points).length,
+      },
+      {
+        type: FilterType.FUTURE,
+        name: FilterType.FUTURE,
+        count: filter[FilterType.FUTURE](points).length,
+      },
+      {
+        type: FilterType.PRESENT,
+        name: FilterType.PRESENT,
+        count: filter[FilterType.PRESENT](points).length,
+      },
+      {
+        type: FilterType.PAST,
+        name: FilterType.PAST,
+        count: filter[FilterType.PAST](points).length,
+      },
+    ];
   }
 
-  init() {
-    this.#renderFilters();
-  }
+  init = () => {
+    const filters = this.filters;
+    const prevFilterComponent = this.#filterComponent;
 
-  #renderFilters() {
-    if (this.#filterComponent) {
-      remove(this.#filterComponent);
+    this.#filterComponent = new FiltersView(filters, this.#filterModel.filter);
+    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
+
+    if (prevFilterComponent === null) {
+      render(this.#filterComponent, this.#filterContainer);
+      return;
     }
-    this.#filterComponent = new FilterView({
-      points: this.events,
-      currentFilter: this.#filterModel.filter,
-      onFilterChange: this.#handleFilterChange,
-    });
-    render(this.#filterComponent, this.#filterContainer);
-  }
 
-  #handleFilterChange = (filterType) => {
-    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
+    replace(this.#filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
   };
 
-  #handleEventsChange = () => {
-    this.#renderFilters();
+  #handleModelEvent = () => {
+    if (this.#offersModel.offers.length === 0 || this.#offersModel.isSuccessfulLoading === false ||
+      this.#destinationsModel.destinations.length === 0 || this.#destinationsModel.isSuccessfulLoading === false ||
+      this.#pointsModel.isSuccessfulLoading === false) {
+      return;
+    }
+    this.init();
+  };
+
+  #handleFilterTypeChange = (filterType) => {
+    if (this.#filterModel.filter === filterType) {
+      return;
+    }
+
+    this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
   };
 }
